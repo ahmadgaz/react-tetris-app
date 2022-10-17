@@ -1,0 +1,82 @@
+/* Animation classes */
+.container-anim:hover > .container-face {
+    bottom: 12px;
+    right: 12px;
+}
+
+.container-anim:active > .container-face {
+    bottom: 4px;
+    right: 4px;
+    transition: top 50ms, left 50ms;
+}
+
+.container-anim {
+    position: relative;
+
+    width: 20vmin;
+    height: 10vmin;
+    min-width: fit-content;
+    min-height: fit-content;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 2.5vmin;
+
+    border-style: solid;
+    border-width: 4px;
+    background-color: black;
+}
+
+/* No animation classes */
+.container {
+    position: relative;
+
+    width: 20vmin;
+    height: 10vmin;
+    min-width: fit-content;
+    min-height: fit-content;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 2.5vmin;
+
+    border-style: solid;
+    border-width: 4px;
+    background-color: black;
+}
+
+.container-face {
+    position: relative;
+    bottom: 8px;
+    right: 8px;
+    overflow: hidden;
+    width: calc(100% - 4vmin);
+    height: calc(100% - 4vmin);
+    padding: 2vmin;
+
+    background-color: white;
+    font-family: "Regular";
+    font-size: 25px;
+    text-shadow: -2px -2px 0 white, 0 -2px 0 white, 2px -2px 0 white,
+        2px 0 0 white, 2px 2px 0 white, 0 2px 0 white, -2px 2px 0 white,
+        -2px 0 0 white;
+
+    border-style: solid;
+    border-width: 4px;
+    background-color: black;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+
+    transition: bottom 250ms, right 250ms;
+}
+
+.bgImg {
+    position: absolute;
+    pointer-events: none;
+    width: 150vmin;
+    min-width: 150%;
+    opacity: 100%;
+    mix-blend-mode: overlay;
+    transform: rotate(-20deg);
+}

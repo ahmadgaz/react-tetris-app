@@ -1,0 +1,52 @@
+.background {
+    position: absolute;
+    width: 100vmax;
+    height: 100vmax;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.background > img {
+    position: absolute;
+    pointer-events: none;
+}
+
+.gradient {
+    height: 100%;
+    width: 100%;
+}
+
+.halftone {
+    height: 110%;
+    width: 110%;
+    transform: rotate(20deg);
+    mix-blend-mode: darken;
+    opacity: 25%;
+}
+.dividers {
+    height: 150%;
+    width: 150%;
+    mix-blend-mode: overlay;
+    opacity: 75%;
+    -webkit-animation: spin 25s linear infinite;
+    -moz-animation: spin 25s linear infinite;
+    animation: spin 25s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+@-moz-keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+@keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
