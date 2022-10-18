@@ -18,10 +18,6 @@ export const Grid = (props) => {
         ))
     );
 
-    // useEffect startGame when Play is pressed
-    // useEffect pauseGame everytime Pause btn is pressed
-    // useEffect endGame everytime gameOver or quit is pressed
-
     return (
         <Container
             isOffwhite={true}

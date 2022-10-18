@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Background } from "./components/background/background.js";
 import { Home } from "./components/home/home.js";
 import { Grid } from "./components/grid/grid.js";
@@ -10,37 +10,30 @@ import { Gameover } from "./components/gameover/gameover.js";
 
 function App() {
     const [score, setScore] = useState(0);
-    const [level, setLevel] = useState(0);
+    const [level, setLevel] = useState(1);
     const [highScore, setHighScore] = useState(0);
     const [gridHidden, setGridHidden] = useState(true);
 
-    const newGame = (lev) => {
-        setLevel(lev);
-        startGame(lev);
-        setGridHidden(false);
-        return;
-    };
-
-    const startGame = (lev) => {};
-
+    // useeffect everytime score changes check for highscore
     const updateMinigrid = () => {};
-
-    const updateScore = () => {};
-
-    const updateLevel = () => {};
 
     return (
         <div className="App">
             <Background />
-            <Home setNewGameLevel={newGame} />
-            <Grid level={level} gridHidden={gridHidden} />
+            <Home setLevel={setLevel} setGridHidden={setGridHidden} />
+            <Grid
+                gridHidden={gridHidden}
+                setScore={setScore}
+                setLevel={setLevel}
+                updateMinigrid={updateMinigrid}
+            />
             <div>
                 <Minigrid />
                 <Scoreboard />
             </div>
             {/*
-            <Pause />
-            <Gameover />
+            <Pause setLevel={setLevel} setGridHidden={setGridHidden} />
+            <Gameover setLevel={setLevel} setGridHidden={setGridHidden} />
             */}
         </div>
     );

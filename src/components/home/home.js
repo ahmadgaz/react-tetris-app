@@ -25,8 +25,9 @@ export const Home = (props) => {
                             textAlign: "center",
                         }}
                         onclick={() => {
-                            setHidden(true);
-                            props.setNewGameLevel(level);
+                            setHidden((hidden) => !hidden);
+                            props.setLevel(level);
+                            props.setGridHidden((hidden) => !hidden);
                             return;
                         }}
                         innerContent={() => {
