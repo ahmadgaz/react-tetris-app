@@ -1,22 +1,81 @@
 import "./grid.css";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { width, colors, theTetrominoes } from "./tetrominoes.js";
 import { Container } from "../container/container.js";
 
-const squareIdxs = [];
-for (let i = 0; i < 210; i++) {
-    squareIdxs.push(i);
-}
-
 export const Grid = (props) => {
-    const [squareItems, setSquareItems] = useState(
-        squareIdxs.map((squareIdx) => (
-            <div
-                className={squareIdx >= 200 ? "taken" : "free"}
-                key={squareIdx.toString()}
-            ></div>
-        ))
+    // Grid Squares
+    const [squares, setSquares] = useState(() => {
+        let grid = [];
+        for (let i = 0; i < 210; i++) {
+            grid.push(
+                <div
+                    key={i.toString()}
+                    className={i >= 200 ? "taken" : "free"}
+                ></div>
+            );
+        }
+        return grid;
+    });
+
+    const [timer, setTimer] = useState(1000);
+    const [currentPos, setCurrentPos] = useState(4);
+    const [currentRot, setCurrentRot] = useState(0);
+    const [nextRandom, setNextRandom] = useState(
+        Math.floor(Math.random() * theTetrominoes.length)
     );
+    const [random, setRandom] = useState(
+        Math.floor(Math.random() * theTetrominoes.length)
+    );
+    const [currentTetromino, setCurrentTetromino] = useState(
+        theTetrominoes[random][currentRot]
+    );
+
+    const [renderState, setRenderState] = useState(false);
+    const render = useRef();
+    useEffect(() => {
+        render.current = renderState;
+    }, [renderState]);
+
+    const drawUndraw = () => {
+        console.log(render.current);
+        if (render.current === false) {
+            setSquares((squares) => {
+                currentTetromino.forEach((square) => {
+                    squares[currentPos + square] = (
+                        <div
+                            key={currentPos + square}
+                            className="tetromino"
+                        ></div>
+                    );
+                });
+                return squares;
+            });
+            setRenderState((r) => !r);
+        } else {
+            setSquares((squares) => {
+                currentTetromino.forEach((square) => {
+                    squares[currentPos + square] = (
+                        <div key={currentPos + square} className="free"></div>
+                    );
+                });
+                return squares;
+            });
+            setRenderState((r) => !r);
+        }
+    };
+
+    const control = (e) => {
+        if (e.keyCode === 38) {
+            drawUndraw();
+        }
+    };
+
+    useEffect(() => {
+        if (props.gridHidden === false) {
+            window.addEventListener("keydown", control);
+        }
+    }, [props.gridHidden]);
 
     return (
         <Container
@@ -34,7 +93,7 @@ export const Grid = (props) => {
                 return;
             }}
             innerContent={() => {
-                return squareItems;
+                return squares;
             }}
         />
     );
