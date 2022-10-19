@@ -6,16 +6,14 @@ import { Container } from "../container/container.js";
 export const Grid = (props) => {
     // Grid Squares
     const [squares, setSquares] = useState(() => {
-        let grid = [];
-        for (let i = 0; i < 210; i++) {
-            grid.push(
-                <div
-                    key={i.toString()}
-                    className={i >= 200 ? "taken" : "free"}
-                ></div>
-            );
-        }
-        return grid;
+        return [
+            ...Array.from(Array(200), (_, i) => (
+                <div key={i} className="free"></div>
+            )),
+            ...Array.from(Array(10), (_, i) => (
+                <div key={i + 200} className="taken"></div>
+            )),
+        ];
     });
 
     const [timer, setTimer] = useState(1000);
@@ -38,28 +36,27 @@ export const Grid = (props) => {
     }, [renderState]);
 
     const drawUndraw = () => {
-        console.log(render.current);
         if (render.current === false) {
-            setSquares((squares) => {
-                currentTetromino.forEach((square) => {
-                    squares[currentPos + square] = (
+            setSquares((sqrs) => {
+                currentTetromino.forEach((sqrkey) => {
+                    sqrs[currentPos + sqrkey] = (
                         <div
-                            key={currentPos + square}
+                            key={currentPos + sqrkey}
                             className="tetromino"
                         ></div>
                     );
                 });
-                return squares;
+                return [...sqrs];
             });
             setRenderState((r) => !r);
         } else {
-            setSquares((squares) => {
-                currentTetromino.forEach((square) => {
-                    squares[currentPos + square] = (
-                        <div key={currentPos + square} className="free"></div>
+            setSquares((sqrs) => {
+                currentTetromino.forEach((sqrkey) => {
+                    sqrs[currentPos + sqrkey] = (
+                        <div key={currentPos + sqrkey} className="free"></div>
                     );
                 });
-                return squares;
+                return [...sqrs];
             });
             setRenderState((r) => !r);
         }
