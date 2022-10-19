@@ -2,9 +2,9 @@ import "./App.css";
 import { useState, useEffect } from "react";
 import { Background } from "./components/background/background.js";
 import { Home } from "./components/home/home.js";
-import { Grid } from "./components/grid/grid.js";
-import { Minigrid } from "./components/minigrid/minigrid.js";
-import { Scoreboard } from "./components/scoreboard/scoreboard.js";
+import { Grid } from "./components/game/grid/grid.js";
+import { Minigrid } from "./components/game/minigrid/minigrid.js";
+import { Scoreboard } from "./components/game/scoreboard/scoreboard.js";
 import { Pause } from "./components/pause/pause.js";
 import { Gameover } from "./components/gameover/gameover.js";
 

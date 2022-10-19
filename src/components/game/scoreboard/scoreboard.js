@@ -1,5 +1,5 @@
 import "./scoreboard.css";
-import { Container } from "../container/container.js";
+import { Container } from "../../container/container.js";
 
 export const Scoreboard = () => {
     return (

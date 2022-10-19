@@ -1,7 +1,7 @@
 import "./grid.css";
 import { useState, useEffect, useRef } from "react";
-import { width, colors, theTetrominoes } from "./tetrominoes.js";
-import { Container } from "../container/container.js";
+import { width, colors, theTetrominoes } from "../gameInfo.js";
+import { Container } from "../../container/container.js";
 
 export const Grid = (props) => {
     // Grid Squares
@@ -29,50 +29,42 @@ export const Grid = (props) => {
         theTetrominoes[random][currentRot]
     );
 
-    const [renderState, setRenderState] = useState(false);
-    const render = useRef();
-    useEffect(() => {
-        render.current = renderState;
-    }, [renderState]);
-
-    const drawUndraw = () => {
-        if (render.current === false) {
-            setSquares((sqrs) => {
-                currentTetromino.forEach((sqrkey) => {
-                    sqrs[currentPos + sqrkey] = (
-                        <div
-                            key={currentPos + sqrkey}
-                            className="tetromino"
-                        ></div>
-                    );
-                });
-                return [...sqrs];
+    const draw = () => {
+        setSquares((sqrs) => {
+            console.log(currentPos.valueOf);
+            currentTetromino.forEach((sqrkey) => {
+                sqrs[currentPos + sqrkey] = (
+                    <div key={currentPos + sqrkey} className="tetromino"></div>
+                );
             });
-            setRenderState((r) => !r);
-        } else {
-            setSquares((sqrs) => {
-                currentTetromino.forEach((sqrkey) => {
-                    sqrs[currentPos + sqrkey] = (
-                        <div key={currentPos + sqrkey} className="free"></div>
-                    );
-                });
-                return [...sqrs];
-            });
-            setRenderState((r) => !r);
-        }
+            return [...sqrs];
+        });
     };
 
     const control = (e) => {
-        if (e.keyCode === 38) {
-            drawUndraw();
+        if (e.keyCode === 37) {
+            //moveLeft();
+        } else if (e.keyCode === 38) {
+            //rotate();
+        } else if (e.keyCode === 39) {
+            //moveRight();
+        } else if (e.keyCode === 40) {
+            moveDown();
         }
     };
 
     useEffect(() => {
         if (props.gridHidden === false) {
             window.addEventListener("keydown", control);
+        } else {
+            window.removeEventListener("keydown", control);
         }
     }, [props.gridHidden]);
+
+    const moveDown = () => {
+        setCurrentPos((cur) => cur + width);
+        draw();
+    };
 
     return (
         <Container

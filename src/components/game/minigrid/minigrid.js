@@ -1,6 +1,6 @@
 import "./minigrid.css";
 import { useState } from "react";
-import { Container } from "../container/container.js";
+import { Container } from "../../container/container.js";
 
 const squareIdxs = [];
 for (let i = 0; i < 16; i++) {

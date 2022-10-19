@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Container } from "../container/container.js";
 
 export const Home = (props) => {
