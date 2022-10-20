@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Background } from "./components/background/background.js";
 import { Home } from "./components/home/home.js";
 import { Grid } from "./components/game/grid/grid.js";
@@ -14,18 +14,14 @@ function App() {
     const [highScore, setHighScore] = useState(0);
     const [gridHidden, setGridHidden] = useState(true);
 
-    // useeffect everytime score changes check for highscore
-    const updateMinigrid = () => {};
-
     return (
         <div className="App">
             <Background />
-            <Home setLevel={setLevel} setGridHidden={setGridHidden} />
+            <Home setGridHidden={setGridHidden} setLevel={setLevel} />
             <Grid
                 gridHidden={gridHidden}
-                setScore={setScore}
                 setLevel={setLevel}
-                updateMinigrid={updateMinigrid}
+                setScore={setScore}
             />
             <div>
                 <Minigrid />
