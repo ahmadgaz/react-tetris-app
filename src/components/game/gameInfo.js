@@ -165,21 +165,31 @@ export const useSetGrid = () => {
     };
     const tooCloseToEdgeToRotate = (nextRot) => {
         return (
-            nextRot.some((sqrKey) => {
-                return (currentPos.current + sqrKey) % width === width - 1;
+            // Checks if any squares from the next rotation contain both a square on the left and right edges of the grid
+            // (which would mean that the next rotation would overflow onto either the previous or next rows)
+            nextRot.some((sqrIdx) => {
+                if ((currentPos.current + sqrIdx) % width === width - 1) {
+                    return nextRot.some((anyOtherSqrIdx) => {
+                        return (
+                            (currentPos.current + anyOtherSqrIdx) % width === 0
+                        );
+                    });
+                } else if ((currentPos.current + sqrIdx) % width === 0) {
+                    return nextRot.some((anyOtherSqrIdx) => {
+                        return (
+                            (currentPos.current + anyOtherSqrIdx) % width ===
+                            width - 1
+                        );
+                    });
+                } else {
+                    return false;
+                }
             }) ||
-            nextRot.some((sqrKey) => {
-                return (currentPos.current + sqrKey) % width === 0;
-            }) ||
+            // Checks if any square from the next rotation overlaps with any square that is "taken"
             nextRot.some((sqrKey) => {
                 return (
-                    squares[currentPos.current + sqrKey] ===
-                    (
-                        <div
-                            key={currentPos.current + sqrKey + 1}
-                            className="taken"
-                        ></div>
-                    )
+                    squares[currentPos.current + sqrKey].props.className ===
+                    "taken"
                 );
             })
         );
@@ -217,7 +227,7 @@ export const useSetGrid = () => {
         setSquares((sqrs) => {
             undraw(sqrs);
             currentRot.current =
-                currentRot.current === currentTetromino.current.length
+                currentRot.current === currentTetromino.current.length - 1
                     ? 0
                     : currentRot.current + 1;
             if (
@@ -225,12 +235,14 @@ export const useSetGrid = () => {
                     theTetrominoes[random.current][currentRot.current]
                 )
             ) {
+                console.log("if");
                 currentTetromino.current =
                     theTetrominoes[random.current][currentRot.current];
             } else {
+                console.log("else");
                 currentRot.current =
                     currentRot.current === 0
-                        ? currentTetromino.current.length
+                        ? currentTetromino.current.length - 1
                         : currentRot.current - 1;
             }
             draw(sqrs);
@@ -254,7 +266,6 @@ export const useSetGrid = () => {
             draw(sqrs);
             return [...sqrs];
         });
-        console.log("your mom");
         timer.current = window.setInterval(moveDown, 1000);
     };
 

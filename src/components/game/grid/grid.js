@@ -4,10 +4,10 @@ import { Container } from "../../container/container.js";
 
 export const Grid = (props) => {
     const { squares, startGame } = useSetGrid();
-    const firstRender = useRef(2);
+    const firstRender = useRef(true);
     useEffect(() => {
-        if (firstRender.current > 0) {
-            firstRender.current -= 1;
+        if (firstRender.current === true) {
+            firstRender.current = false;
             return;
         }
 
