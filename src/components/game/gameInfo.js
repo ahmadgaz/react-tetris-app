@@ -56,6 +56,7 @@ export const useSetGrid = () => {
         ];
     });
 
+    // Values
     const timer = useRef();
     const currentPos = useRef(4);
     const currentRot = useRef(0);
@@ -76,29 +77,48 @@ export const useSetGrid = () => {
             );
         });
     };
-    const draw = (sqrs) => {
-        // Checks if current position overlaps taken square
-        if (isRightAboveTakenSquare(sqrs, currentTetromino.current)) {
-            // Freeze Tetromino
-            currentTetromino.current.forEach((sqrkey) => {
-                sqrs[currentPos.current + sqrkey] = (
-                    <div
-                        key={currentPos.current + sqrkey}
-                        className="taken"
-                    ></div>
-                );
-            });
-            random.current = nextRandom.current;
-            nextRandom.current = Math.floor(
-                Math.random() * theTetrominoes.length
+    const freezeTetromino = (sqrs) => {
+        // Freeze Tetromino
+        currentTetromino.current.forEach((sqrkey) => {
+            sqrs[currentPos.current + sqrkey] = (
+                <div key={currentPos.current + sqrkey} className="taken"></div>
             );
-            currentRot.current = 0;
-            currentTetromino.current =
-                theTetrominoes[random.current][currentRot.current];
-            currentPos.current = 4;
-            //setNextTetromino();
-            // add score bs
-            // add gameover bs
+        });
+    };
+    const checkForFullRow = (sqrs) => {
+        sqrs.forEach((sqr) => {
+            if (
+                Number(sqr.key) < 200 &&
+                Number(sqr.key) % width === 0 &&
+                sqrs
+                    .slice(Number(sqr.key), Number(sqr.key) + width)
+                    .every((s) => s.props.className === "taken")
+            ) {
+                sqrs.slice(Number(sqr.key), Number(sqr.key) + width).forEach(
+                    (s) => {
+                        console.log(s.key);
+                    }
+                );
+            }
+        });
+    };
+    const setNewTetrominoValues = () => {
+        random.current = nextRandom.current;
+        nextRandom.current = Math.floor(Math.random() * theTetrominoes.length);
+        currentRot.current = 0;
+        currentTetromino.current =
+            theTetrominoes[random.current][currentRot.current];
+        currentPos.current = 4;
+        //setNextTetromino();
+        // add score bs
+        // add gameover bs
+    };
+    const draw = (sqrs) => {
+        // Checks if current position overlaps a taken square
+        if (isRightAboveTakenSquare(sqrs, currentTetromino.current)) {
+            freezeTetromino(sqrs);
+            checkForFullRow(sqrs);
+            setNewTetrominoValues();
         }
         // Draw New Tetromino
         currentTetromino.current.forEach((sqrkey) => {
@@ -243,6 +263,7 @@ export const useSetGrid = () => {
             moveDown();
         }
     };
+
     const startGame = () => {
         window.addEventListener("keydown", keyControls);
         setSquares((sqrs) => {
