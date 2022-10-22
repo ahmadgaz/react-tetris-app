@@ -44,6 +44,7 @@ const theTetrominoes = [
 
 // Setters
 export const useSetGrid = () => {
+    // Grid
     const [squares, setSquares] = useState(() => {
         return [
             ...Array.from(Array(200), (_, i) => (
@@ -65,45 +66,20 @@ export const useSetGrid = () => {
     const currentTetromino = useRef(
         theTetrominoes[random.current][currentRot.current]
     );
-    const draw = (sqrs) => {
-        // draw tetromino
-        currentTetromino.current.forEach((sqrkey) => {
-            sqrs[currentPos.current + sqrkey] = (
-                <div
-                    key={currentPos.current + sqrkey}
-                    className="tetromino"
-                ></div>
-            );
-        });
-        return [...sqrs];
-    };
-    const undraw = (sqrs) => {
-        // undraw tetromino
 
-        currentTetromino.current.forEach((sqrkey) => {
-            sqrs[currentPos.current + sqrkey] = (
-                <div key={currentPos.current + sqrkey} className="free"></div>
-            );
-        });
-        return [...sqrs];
-    };
-    const isRightAboveTakenSquare = (cur) => {
+    // Draw and undraw tetrominos
+    const isRightAboveTakenSquare = (sqrs, cur) => {
         return cur.some((sqrKey) => {
             return (
-                squares[currentPos.current + sqrKey + width] ===
-                (
-                    <div
-                        key={currentPos.current + sqrKey + width}
-                        className="taken"
-                    ></div>
-                )
+                sqrs[currentPos.current + sqrKey + width].props.className ===
+                "taken"
             );
         });
     };
-    const freeze = (sqrs) => {
-        if (isRightAboveTakenSquare(currentTetromino.current)) {
-            // freeze square and update grid
-
+    const draw = (sqrs) => {
+        // Checks if current position overlaps taken square
+        if (isRightAboveTakenSquare(sqrs, currentTetromino.current)) {
+            // Freeze Tetromino
             currentTetromino.current.forEach((sqrkey) => {
                 sqrs[currentPos.current + sqrkey] = (
                     <div
@@ -120,50 +96,57 @@ export const useSetGrid = () => {
             currentTetromino.current =
                 theTetrominoes[random.current][currentRot.current];
             currentPos.current = 4;
-            draw(sqrs);
             //setNextTetromino();
             // add score bs
             // add gameover bs
-            return [...sqrs];
         }
+        // Draw New Tetromino
+        currentTetromino.current.forEach((sqrkey) => {
+            sqrs[currentPos.current + sqrkey] = (
+                <div
+                    key={currentPos.current + sqrkey}
+                    className="tetromino"
+                ></div>
+            );
+        });
     };
-    const atLeftEdge = (cur) => {
+    const undraw = (sqrs) => {
+        // Undraw current tetromino
+        currentTetromino.current.forEach((sqrkey) => {
+            sqrs[currentPos.current + sqrkey] = (
+                <div key={currentPos.current + sqrkey} className="free"></div>
+            );
+        });
+    };
+
+    // Move current tetromino around
+    const atLeftEdge = (sqrs, cur) => {
         return (
             cur.some((sqrKey) => {
                 return (currentPos.current + sqrKey) % width === 0;
             }) ||
             cur.some((sqrKey) => {
                 return (
-                    squares[currentPos.current + sqrKey - 1] ===
-                    (
-                        <div
-                            key={currentPos.current + sqrKey - 1}
-                            className="taken"
-                        ></div>
-                    )
+                    sqrs[currentPos.current + sqrKey - 1].props.className ===
+                    "taken"
                 );
             })
         );
     };
-    const atRightEdge = (cur) => {
+    const atRightEdge = (sqrs, cur) => {
         return (
             cur.some((sqrKey) => {
                 return (currentPos.current + sqrKey) % width === width - 1;
             }) ||
             cur.some((sqrKey) => {
                 return (
-                    squares[currentPos.current + sqrKey + 1] ===
-                    (
-                        <div
-                            key={currentPos.current + sqrKey + 1}
-                            className="taken"
-                        ></div>
-                    )
+                    sqrs[currentPos.current + sqrKey + 1].props.className ===
+                    "taken"
                 );
             })
         );
     };
-    const tooCloseToEdgeToRotate = (nextRot) => {
+    const tooCloseToEdgeToRotate = (sqrs, nextRot) => {
         return (
             // Checks if any squares from the next rotation contain both a square on the left and right edges of the grid
             // (which would mean that the next rotation would overflow onto either the previous or next rows)
@@ -188,7 +171,7 @@ export const useSetGrid = () => {
             // Checks if any square from the next rotation overlaps with any square that is "taken"
             nextRot.some((sqrKey) => {
                 return (
-                    squares[currentPos.current + sqrKey].props.className ===
+                    sqrs[currentPos.current + sqrKey].props.className ===
                     "taken"
                 );
             })
@@ -199,14 +182,13 @@ export const useSetGrid = () => {
             undraw(sqrs);
             currentPos.current += width;
             draw(sqrs);
-            freeze(sqrs);
             return [...sqrs];
         });
     };
     const moveLeft = () => {
         setSquares((sqrs) => {
             undraw(sqrs);
-            if (!atLeftEdge(currentTetromino.current)) {
+            if (!atLeftEdge(sqrs, currentTetromino.current)) {
                 currentPos.current -= 1;
             }
             draw(sqrs);
@@ -216,7 +198,7 @@ export const useSetGrid = () => {
     const moveRight = () => {
         setSquares((sqrs) => {
             undraw(sqrs);
-            if (!atRightEdge(currentTetromino.current)) {
+            if (!atRightEdge(sqrs, currentTetromino.current)) {
                 currentPos.current += 1;
             }
             draw(sqrs);
@@ -232,14 +214,13 @@ export const useSetGrid = () => {
                     : currentRot.current + 1;
             if (
                 !tooCloseToEdgeToRotate(
+                    sqrs,
                     theTetrominoes[random.current][currentRot.current]
                 )
             ) {
-                console.log("if");
                 currentTetromino.current =
                     theTetrominoes[random.current][currentRot.current];
             } else {
-                console.log("else");
                 currentRot.current =
                     currentRot.current === 0
                         ? currentTetromino.current.length - 1
@@ -249,6 +230,8 @@ export const useSetGrid = () => {
             return [...sqrs];
         });
     };
+
+    // Keycontrols
     const keyControls = (e) => {
         if (e.keyCode === 37) {
             moveLeft();
