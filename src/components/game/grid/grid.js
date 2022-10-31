@@ -4,6 +4,8 @@ import { Container } from "../../container/container.js";
 
 export const Grid = (props) => {
     const { squares, startGame } = useSetGrid();
+
+    // Skip first render
     const firstRender = useRef(true);
     useEffect(() => {
         if (firstRender.current === true) {

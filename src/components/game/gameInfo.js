@@ -57,6 +57,7 @@ export const useSetGrid = () => {
     });
 
     // Values
+    const [score, setScore] = useState();
     const timer = useRef();
     const currentPos = useRef(4);
     const currentRot = useRef(0);
@@ -78,29 +79,56 @@ export const useSetGrid = () => {
         });
     };
     const freezeTetromino = (sqrs) => {
+        let s = sqrs;
         // Freeze Tetromino
         currentTetromino.current.forEach((sqrkey) => {
-            sqrs[currentPos.current + sqrkey] = (
+            s[currentPos.current + sqrkey] = (
                 <div key={currentPos.current + sqrkey} className="taken"></div>
             );
         });
+        return s;
     };
     const checkForFullRow = (sqrs) => {
-        sqrs.forEach((sqr) => {
+        let s;
+        sqrs.every((sqr) => {
+            s = [];
             if (
                 Number(sqr.key) < 200 &&
                 Number(sqr.key) % width === 0 &&
                 sqrs
                     .slice(Number(sqr.key), Number(sqr.key) + width)
-                    .every((s) => s.props.className === "taken")
+                    .every((sq) => sq.props.className === "taken")
             ) {
-                sqrs.slice(Number(sqr.key), Number(sqr.key) + width).forEach(
-                    (s) => {
-                        console.log(s.key);
-                    }
+                s.push(
+                    ...Array.from(Array(width), (_, i) => (
+                        <div key={i} className="free"></div>
+                    )),
+                    ...Array.from(Array(Number(sqr.key)), (_, i) => (
+                        <div
+                            key={i + width}
+                            className={sqrs[i].props.className}
+                        ></div>
+                    )),
+                    ...Array.from(
+                        Array(sqrs.length - Number(sqr.key) - width),
+                        (_, i) => (
+                            <div
+                                key={Number(sqr.key) + width + i}
+                                className={
+                                    sqrs[Number(sqr.key) + width + i].props
+                                        .className
+                                }
+                            ></div>
+                        )
+                    )
                 );
+                s = checkForFullRow(s);
+                return false;
             }
+            s = sqrs;
+            return true;
         });
+        return s;
     };
     const setNewTetrominoValues = () => {
         random.current = nextRandom.current;
@@ -114,29 +142,33 @@ export const useSetGrid = () => {
         // add gameover bs
     };
     const draw = (sqrs) => {
+        let s = sqrs;
         // Checks if current position overlaps a taken square
-        if (isRightAboveTakenSquare(sqrs, currentTetromino.current)) {
-            freezeTetromino(sqrs);
-            checkForFullRow(sqrs);
+        if (isRightAboveTakenSquare(s, currentTetromino.current)) {
+            s = freezeTetromino(s);
+            s = checkForFullRow(s);
             setNewTetrominoValues();
         }
         // Draw New Tetromino
         currentTetromino.current.forEach((sqrkey) => {
-            sqrs[currentPos.current + sqrkey] = (
+            s[currentPos.current + sqrkey] = (
                 <div
                     key={currentPos.current + sqrkey}
                     className="tetromino"
                 ></div>
             );
         });
+        return s;
     };
     const undraw = (sqrs) => {
         // Undraw current tetromino
+        let s = sqrs;
         currentTetromino.current.forEach((sqrkey) => {
-            sqrs[currentPos.current + sqrkey] = (
+            s[currentPos.current + sqrkey] = (
                 <div key={currentPos.current + sqrkey} className="free"></div>
             );
         });
+        return s;
     };
 
     // Move current tetromino around
@@ -199,35 +231,35 @@ export const useSetGrid = () => {
     };
     const moveDown = () => {
         setSquares((sqrs) => {
-            undraw(sqrs);
+            sqrs = undraw(sqrs);
             currentPos.current += width;
-            draw(sqrs);
+            sqrs = draw(sqrs);
             return [...sqrs];
         });
     };
     const moveLeft = () => {
         setSquares((sqrs) => {
-            undraw(sqrs);
+            sqrs = undraw(sqrs);
             if (!atLeftEdge(sqrs, currentTetromino.current)) {
                 currentPos.current -= 1;
             }
-            draw(sqrs);
+            sqrs = draw(sqrs);
             return [...sqrs];
         });
     };
     const moveRight = () => {
         setSquares((sqrs) => {
-            undraw(sqrs);
+            sqrs = undraw(sqrs);
             if (!atRightEdge(sqrs, currentTetromino.current)) {
                 currentPos.current += 1;
             }
-            draw(sqrs);
+            sqrs = draw(sqrs);
             return [...sqrs];
         });
     };
     const rotate = () => {
         setSquares((sqrs) => {
-            undraw(sqrs);
+            sqrs = undraw(sqrs);
             currentRot.current =
                 currentRot.current === currentTetromino.current.length - 1
                     ? 0
@@ -246,7 +278,7 @@ export const useSetGrid = () => {
                         ? currentTetromino.current.length - 1
                         : currentRot.current - 1;
             }
-            draw(sqrs);
+            sqrs = draw(sqrs);
             return [...sqrs];
         });
     };
@@ -267,7 +299,7 @@ export const useSetGrid = () => {
     const startGame = () => {
         window.addEventListener("keydown", keyControls);
         setSquares((sqrs) => {
-            draw(sqrs);
+            sqrs = draw(sqrs);
             return [...sqrs];
         });
         timer.current = window.setInterval(moveDown, 1000);
