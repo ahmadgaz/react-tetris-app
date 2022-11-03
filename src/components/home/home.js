@@ -2,14 +2,12 @@ import { useState } from "react";
 import { Container } from "../container/container.js";
 
 export const Home = (props) => {
-    const [hidden, setHidden] = useState(false);
     const [level, setLevel] = useState(1);
 
     return (
         <Container
             isOffwhite={true}
             bgImg={true}
-            hidden={hidden}
             outerStyles={{
                 width: "42.5vmin",
                 height: "85vmin",
@@ -25,9 +23,7 @@ export const Home = (props) => {
                             textAlign: "center",
                         }}
                         onclick={() => {
-                            setHidden((hidden) => !hidden);
-                            props.setLevel(level);
-                            props.setGridHidden((hidden) => !hidden);
+                            props.onClickPlay(level);
                             return;
                         }}
                         innerContent={() => {

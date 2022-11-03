@@ -43,7 +43,7 @@ const theTetrominoes = [
 ];
 
 // Setters
-export const useSetGrid = () => {
+export const useSetGame = () => {
     // Grid
     const [squares, setSquares] = useState(() => {
         return [
@@ -57,7 +57,8 @@ export const useSetGrid = () => {
     });
 
     // Values
-    const [score, setScore] = useState();
+    const score = useRef(0);
+    const level = useRef(1);
     const timer = useRef();
     const currentPos = useRef(4);
     const currentRot = useRef(0);
@@ -122,6 +123,7 @@ export const useSetGrid = () => {
                         )
                     )
                 );
+                score.current += 10;
                 s = checkForFullRow(s);
                 return false;
             }
@@ -296,18 +298,15 @@ export const useSetGrid = () => {
         }
     };
 
-    const startGame = () => {
+    const startGame = (lev) => {
         window.addEventListener("keydown", keyControls);
         setSquares((sqrs) => {
             sqrs = draw(sqrs);
             return [...sqrs];
         });
+        level.current = lev;
         timer.current = window.setInterval(moveDown, 1000);
     };
 
-    return { squares, startGame };
+    return { squares, score, level, startGame };
 };
-
-const useSetMinigrid = (nextTetromino) => {};
-
-const useSetScoreboard = (level, score) => {};

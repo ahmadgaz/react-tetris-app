@@ -1,5 +1,6 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { useSetGame } from "./components/game/gameInfo";
 import { Background } from "./components/background/background.js";
 import { Home } from "./components/home/home.js";
 import { Grid } from "./components/game/grid/grid.js";
@@ -9,23 +10,39 @@ import { Pause } from "./components/pause/pause.js";
 import { Gameover } from "./components/gameover/gameover.js";
 
 function App() {
-    const [score, setScore] = useState(0);
+    const startGame = useRef(false);
     const [level, setLevel] = useState(1);
-    const [highScore, setHighScore] = useState(0);
-    const [gridHidden, setGridHidden] = useState(true);
+    const [score, setScore] = useState(0);
+    const [showHome, setShowHome] = useState(true);
+    const [showGrid, setShowGrid] = useState(false);
+
+    const setGame = (lev) => {
+        setShowHome((show) => !show);
+        setShowGrid((show) => !show);
+        setLevel(lev);
+        startGame.current = !startGame.current;
+    };
 
     return (
         <div className="App">
             <Background />
-            <Home setGridHidden={setGridHidden} setLevel={setLevel} />
-            <Grid
-                gridHidden={gridHidden}
-                setLevel={setLevel}
-                setScore={setScore}
-            />
+            {showHome && <Home value="" onClickPlay={setGame} />}
+            {showGrid && (
+                <Grid
+                    startGame={startGame.current}
+                    level={level}
+                    onChangeScore={setScore}
+                    onChangeLevel={setLevel}
+                    onChangeMinigrid=""
+                />
+            )}
             <div>
-                <Minigrid />
-                <Scoreboard />
+                <Minigrid startGame={startGame.current} />
+                <Scoreboard
+                    startGame={startGame.current}
+                    score={score}
+                    level={level}
+                />
             </div>
             {/*
             <Pause setLevel={setLevel} setGridHidden={setGridHidden} />

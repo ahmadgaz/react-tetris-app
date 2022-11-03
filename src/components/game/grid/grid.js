@@ -1,27 +1,28 @@
 import { useState, useEffect, useRef } from "react";
-import { useSetGrid } from "../gameInfo.js";
+import { useSetGame } from "../gameInfo.js";
 import { Container } from "../../container/container.js";
 
 export const Grid = (props) => {
-    const { squares, startGame } = useSetGrid();
+    const { squares, score, level, startGame } = useSetGame();
 
-    // Skip first render
-    const firstRender = useRef(true);
     useEffect(() => {
-        if (firstRender.current === true) {
-            firstRender.current = false;
-            return;
+        if (props.startGame) {
+            startGame(props.level);
         }
+    }, [props.startGame]);
 
-        startGame();
-        return;
-    }, [props.gridHidden]);
+    useEffect(() => {
+        props.onChangeScore(score.current);
+    }, [score.current]);
+
+    useEffect(() => {
+        props.onChangeLevel(level.current);
+    }, [level.current]);
 
     return (
         <Container
             isOffwhite={true}
             bgImg={true}
-            hidden={props.gridHidden}
             outerStyles={{
                 minWidth: "42.5vmin",
                 minHeight: "85vmin",

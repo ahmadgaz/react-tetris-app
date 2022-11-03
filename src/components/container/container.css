@@ -52,7 +52,6 @@
     height: calc(100% - 4vmin);
     padding: 2vmin;
 
-    background-color: white;
     font-family: "Regular";
     font-size: 25px;
     text-shadow: -2px -2px 0 white, 0 -2px 0 white, 2px -2px 0 white,
@@ -61,7 +60,7 @@
 
     border-style: solid;
     border-width: 4px;
-    background-color: black;
+    background-color: white;
 
     display: flex;
     flex-wrap: wrap;

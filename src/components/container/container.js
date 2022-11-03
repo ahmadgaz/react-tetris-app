@@ -1,24 +1,11 @@
 import "./container.css";
-import { useMemo } from "react";
 import BgImg from "../background/images/halftone.png";
 
 export const Container = (props) => {
-    const bgImg = () => {
-        if (props.bgImg === true) {
-            return <img className="bgImg" src={BgImg} />;
-        } else {
-            return null;
-        }
-    };
-
     return (
         <div
             className={props.animate === true ? "container-anim" : "container"}
-            style={
-                props.hidden === true
-                    ? { ...props.outerStyles, display: "none" }
-                    : props.outerStyles
-            }
+            style={props.outerStyles}
             onClick={() => {
                 if (props.onclick instanceof Function) {
                     props.onclick();
@@ -36,8 +23,8 @@ export const Container = (props) => {
                         : { ...props.innerStyles, backgroundColor: "white" }
                 }
             >
-                {useMemo(() => bgImg(), [props.bgImg])}
-                {props.innerContent()}
+                {props.bgImg === true && <img className="bgImg" src={BgImg} />}
+                {!(props.innerContent === undefined) && props.innerContent()}
             </div>
         </div>
     );
@@ -46,11 +33,9 @@ export const Container = (props) => {
 /*
 Props:
 <Container 
-    animate="true || false"
-    isOffwhite="true || false"
-    bgImg="true || false"
-    hidden="true || false"
-    cells=">1"
+    animate="true" || "false"
+    isOffwhite="true" || "false"
+    bgImg="true" || "false"
     outerStyles={{width: "", height: ""}} 
     innerStyles={{*styles*}}
     onClick={*function*} 
