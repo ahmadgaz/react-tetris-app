@@ -3,11 +3,13 @@ import { useSetGame } from "../gameInfo.js";
 import { Container } from "../../container/container.js";
 
 export const Grid = (props) => {
-    const { squares, score, level, startGame } = useSetGame();
+    const { squares, score, level, minigrid, startGame } = useSetGame();
 
     useEffect(() => {
         if (props.startGame) {
             startGame(props.level);
+            props.onChangeScore(score.current);
+            props.onChangeMinigrid(minigrid.current);
         }
     }, [props.startGame]);
 
@@ -18,6 +20,10 @@ export const Grid = (props) => {
     useEffect(() => {
         props.onChangeLevel(level.current);
     }, [level.current]);
+
+    useEffect(() => {
+        props.onChangeMinigrid(minigrid.current);
+    }, [minigrid.current]);
 
     return (
         <Container

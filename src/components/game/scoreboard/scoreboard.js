@@ -7,7 +7,7 @@ export const Scoreboard = (props) => {
             outerStyles={
                 !props.startGame
                     ? {
-                          borderColor: "rgb(100, 100, 100)",
+                          borderColor: "rgb(65, 65, 65)",
                           width: "30vmin",
                           height: "51vmin",
                       }
@@ -18,7 +18,7 @@ export const Scoreboard = (props) => {
             }
             innerStyles={
                 !props.startGame && {
-                    color: "rgba(0, 0, 0, 0.5)",
+                    color: "rgba(0, 0, 0, 0.65)",
                 }
             }
             innerContent={() => {

@@ -1,6 +1,5 @@
 import "./App.css";
 import { useState, useRef } from "react";
-import { useSetGame } from "./components/game/gameInfo";
 import { Background } from "./components/background/background.js";
 import { Home } from "./components/home/home.js";
 import { Grid } from "./components/game/grid/grid.js";
@@ -11,8 +10,9 @@ import { Gameover } from "./components/gameover/gameover.js";
 
 function App() {
     const startGame = useRef(false);
-    const [level, setLevel] = useState(1);
     const [score, setScore] = useState(0);
+    const [level, setLevel] = useState(1);
+    const [minigrid, setMinigrid] = useState();
     const [showHome, setShowHome] = useState(true);
     const [showGrid, setShowGrid] = useState(false);
 
@@ -33,11 +33,11 @@ function App() {
                     level={level}
                     onChangeScore={setScore}
                     onChangeLevel={setLevel}
-                    onChangeMinigrid=""
+                    onChangeMinigrid={setMinigrid}
                 />
             )}
             <div>
-                <Minigrid startGame={startGame.current} />
+                <Minigrid startGame={startGame.current} minigrid={minigrid} />
                 <Scoreboard
                     startGame={startGame.current}
                     score={score}

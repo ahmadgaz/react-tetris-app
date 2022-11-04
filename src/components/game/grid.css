@@ -9,9 +9,19 @@
     height: 5%;
     background-color: none;
 }
+.miniFree {
+    width: 25%;
+    height: 25%;
+    background-color: none;
+}
 
 .tetromino {
     width: 10%;
     height: 5%;
+    background-color: blue;
+}
+.miniTetromino {
+    width: 25%;
+    height: 25%;
     background-color: blue;
 }
