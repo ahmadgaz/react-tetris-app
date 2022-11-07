@@ -1,7 +1,12 @@
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useState, useRef, useEffect } from "react";
+import * as THREE from "three";
+import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { Effects } from "@react-three/drei";
+import { RenderPixelatedPass } from "three/examples/jsm/postprocessing/RenderPixelatedPass.js";
 import { Container } from "../container/container.js";
 import { Model } from "./Logo.js";
+
+extend({ RenderPixelatedPass });
 
 export const Logo = () => {
     const groupRef = useRef();
@@ -54,8 +59,17 @@ export const Logo = () => {
         groupRef.current.rotation.x = 2 * pos.current[1];
     });
 
+    const { size, scene, camera } = useThree();
+    const resolution = useMemo(
+        () => new THREE.Vector2(size.width, size.height),
+        [size]
+    );
+
     return (
         <group ref={groupRef} position={[0, 0, -11]}>
+            <Effects>
+                <renderPixelatedPass args={[resolution, 3, scene, camera]} />
+            </Effects>
             <Model position={[0, 0, 0]} />
         </group>
     );
@@ -76,10 +90,10 @@ export const Home = (props) => {
             innerContent={() => {
                 return [
                     <div key="0" style={{ display: "block" }}>
-                        <Canvas>
+                        <Canvas gl={{ antialias: "false" }}>
                             <ambientLight intensity={0.5} />
                             <directionalLight
-                                position={[-2, 5, 2]}
+                                position={[0, 5, 5]}
                                 intensity={1}
                             />
                             <Logo />
