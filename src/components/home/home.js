@@ -68,7 +68,15 @@ export const Logo = () => {
     return (
         <group ref={groupRef} position={[0, 0, -11]}>
             <Effects>
-                <renderPixelatedPass args={[resolution, 3, scene, camera]} />
+                <renderPixelatedPass
+                    args={[
+                        resolution,
+                        2,
+                        scene,
+                        camera,
+                        { normalEdgeStrength: "1", depthEdgeStrength: "1" },
+                    ]}
+                />
             </Effects>
             <Model position={[0, 0, 0]} />
         </group>
@@ -91,8 +99,9 @@ export const Home = (props) => {
                 return [
                     <div key="0" style={{ display: "block" }}>
                         <Canvas gl={{ antialias: "false" }}>
-                            <ambientLight intensity={0.5} />
+                            <ambientLight castShadow={"true"} intensity={1} />
                             <directionalLight
+                                castShadow={"true"}
                                 position={[0, 5, 5]}
                                 intensity={1}
                             />

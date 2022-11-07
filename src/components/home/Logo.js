@@ -11,15 +11,25 @@ export function Model(props) {
     return (
         <group {...props} rotation={[1.5, 0, 0]} scale={1.7} dispose={null}>
             <mesh
+                castShadow={"true"}
+                receiveShadow={"true"}
                 geometry={nodes.Border.geometry}
                 material={materials.Striped}
                 position={[0 - 3.5, 0.3, 0]}
             />
             <mesh
+                castShadow={"true"}
+                receiveShadow={"true"}
                 geometry={nodes.Metris.geometry}
-                material={materials.Blue}
                 position={[8.19 - 3.5 - 4.96, 1.5 - 1.5, -6.13 + 3.67]}
-            />
+            >
+                <meshPhongMaterial
+                    color={0x0055b3}
+                    shininess={3}
+                    emissive={0x009dff}
+                    specular={"darkgrey"}
+                />
+            </mesh>
         </group>
     );
 }
