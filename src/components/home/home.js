@@ -49,26 +49,34 @@ export const Logo = () => {
                 ((10 * window.innerHeight) / 2) -
             changeInPos.current[1];
     };
+    const { size, viewport, gl, scene, camera } = useThree();
+    const resolution = useMemo(
+        () => new THREE.Vector2(size.width, size.height),
+        [size]
+    );
+    const scale = useRef(
+        Math.min(window.innerHeight / 1000, window.innerWidth / 1000)
+    );
 
-    window.addEventListener("mousemove", (e) => {
-        updatePos(e.clientX, e.clientY);
-    });
-    window.addEventListener("mouseout", () => {
-        updatePos(0, 0);
-    });
-
-    //useEffect(() => {
-    //    window.addEventListener("mousemove", (e) => {
-    //        updatePos(e.clientX, e.clientY);
-    //    });
-    //    window.addEventListener("mouseout", () => {
-    //        updatePos(0, 0);
-    //    });
-    //    return () => {
-    //        window.removeEventListener("mousemove");
-    //        window.removeEventListener("mouseout");
-    //    };
-    //}, []);
+    useEffect(() => {
+        window.addEventListener("mousemove", (e) => {
+            updatePos(e.clientX, e.clientY);
+        });
+        window.addEventListener("mouseout", () => {
+            updatePos(0, 0);
+        });
+        window.addEventListener("resize", () => {
+            scale.current = Math.min(
+                window.innerHeight / 1000,
+                window.innerWidth / 1000
+            );
+        });
+        return () => {
+            window.removeEventListener("mousemove");
+            window.removeEventListener("mouseout");
+            window.removeEventListener("resize");
+        };
+    }, []);
 
     useFrame(() => {
         easePos();
@@ -76,14 +84,14 @@ export const Logo = () => {
         groupRef.current.rotation.x = 3.5 * pos.current[1];
     });
 
-    const { size, scene, camera } = useThree();
-    const resolution = useMemo(
-        () => new THREE.Vector2(size.width, size.height),
-        [size]
-    );
-
     return (
-        <group castShadow receiveShadow ref={groupRef} position={[0, 0, -100]}>
+        <group
+            castShadow
+            receiveShadow
+            ref={groupRef}
+            scale={scale.current}
+            position={[0, 0, -100]}
+        >
             <ambientLight intensity={0.1} />
             <spotLight castShadow intensity={3} position={[0, 0, 450]} />
             <Effects>
@@ -98,6 +106,10 @@ export const Logo = () => {
                     ]}
                 />
             </Effects>
+            <mesh receiveShadow>
+                <planeGeometry args={[500, 500]} />
+                <shadowMaterial opacity={0.2} />
+            </mesh>
             <Model position={[0, 0, 0]} />
         </group>
     );
@@ -121,8 +133,8 @@ export const Home = (props) => {
                         key="0"
                         style={{
                             display: "block",
-                            width: "375px",
-                            height: "250px",
+                            width: "35vmin",
+                            height: "25vmin",
                         }}
                     >
                         <Canvas gl={{ antialias: "false" }} shadows>
