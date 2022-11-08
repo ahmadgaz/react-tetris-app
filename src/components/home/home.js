@@ -1,28 +1,29 @@
 import * as THREE from "three";
 import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
 import { useState, useRef, useEffect, useMemo } from "react";
-import { Effects } from "@react-three/drei";
+import { Effects, OrthographicCamera } from "@react-three/drei";
 import { RenderPixelatedPass } from "three/examples/jsm/postprocessing/RenderPixelatedPass.js";
+import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
 import { Container } from "../container/container.js";
 import { Model } from "./Logo.js";
 
-extend({ RenderPixelatedPass });
+extend({ RenderPixelatedPass, OutlinePass });
 
 export const Logo = () => {
     const groupRef = useRef();
-    const pointerPosition = useRef([0, 0]);
+    const rawPointerCoordinates = useRef([0, 0]);
     const pos = useRef([0, 0]);
     const changeInPos = useRef([0, 0]);
 
     const updatePos = (x, y) => {
         // X
-        pointerPosition.current[0] = x;
+        rawPointerCoordinates.current[0] = x;
         changeInPos.current[0] =
             (x - window.innerWidth / 2) / ((10 * window.innerWidth) / 2) -
             pos.current[0];
 
         // Y
-        pointerPosition.current[1] = y;
+        rawPointerCoordinates.current[1] = y;
         changeInPos.current[1] =
             (y - window.innerHeight / 2) / ((10 * window.innerHeight) / 2) -
             pos.current[1];
@@ -40,11 +41,11 @@ export const Logo = () => {
         changeInPos.current[0] = approachZero(changeInPos.current[0]);
         changeInPos.current[1] = approachZero(changeInPos.current[1]);
         pos.current[0] =
-            (pointerPosition.current[0] - window.innerWidth / 2) /
+            (rawPointerCoordinates.current[0] - window.innerWidth / 2) /
                 ((10 * window.innerWidth) / 2) -
             changeInPos.current[0];
         pos.current[1] =
-            (pointerPosition.current[1] - window.innerHeight / 2) /
+            (rawPointerCoordinates.current[1] - window.innerHeight / 2) /
                 ((10 * window.innerHeight) / 2) -
             changeInPos.current[1];
     };
@@ -52,11 +53,27 @@ export const Logo = () => {
     window.addEventListener("mousemove", (e) => {
         updatePos(e.clientX, e.clientY);
     });
+    window.addEventListener("mouseout", () => {
+        updatePos(0, 0);
+    });
+
+    //useEffect(() => {
+    //    window.addEventListener("mousemove", (e) => {
+    //        updatePos(e.clientX, e.clientY);
+    //    });
+    //    window.addEventListener("mouseout", () => {
+    //        updatePos(0, 0);
+    //    });
+    //    return () => {
+    //        window.removeEventListener("mousemove");
+    //        window.removeEventListener("mouseout");
+    //    };
+    //}, []);
 
     useFrame(() => {
         easePos();
-        groupRef.current.rotation.y = 2 * pos.current[0];
-        groupRef.current.rotation.x = 2 * pos.current[1];
+        groupRef.current.rotation.y = 3.5 * pos.current[0];
+        groupRef.current.rotation.x = 3.5 * pos.current[1];
     });
 
     const { size, scene, camera } = useThree();
@@ -66,8 +83,11 @@ export const Logo = () => {
     );
 
     return (
-        <group ref={groupRef} position={[0, 0, -11]}>
+        <group castShadow receiveShadow ref={groupRef} position={[0, 0, -100]}>
+            <ambientLight intensity={0.1} />
+            <spotLight castShadow intensity={3} position={[0, 0, 450]} />
             <Effects>
+                <outlinePass args={[resolution, scene, camera]} />
                 <renderPixelatedPass
                     args={[
                         resolution,
@@ -97,14 +117,16 @@ export const Home = (props) => {
             innerStyles={{ flexDirection: "column" }}
             innerContent={() => {
                 return [
-                    <div key="0" style={{ display: "block" }}>
-                        <Canvas gl={{ antialias: "false" }}>
-                            <ambientLight castShadow={"true"} intensity={1} />
-                            <directionalLight
-                                castShadow={"true"}
-                                position={[0, 5, 5]}
-                                intensity={1}
-                            />
+                    <div
+                        key="0"
+                        style={{
+                            display: "block",
+                            width: "375px",
+                            height: "250px",
+                        }}
+                    >
+                        <Canvas gl={{ antialias: "false" }} shadows>
+                            <OrthographicCamera makeDefault />
                             <Logo />
                         </Canvas>
                     </div>,

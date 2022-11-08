@@ -9,26 +9,24 @@ export function Model(props) {
     const { nodes, materials } = useGLTF("/logo.gltf");
 
     return (
-        <group {...props} rotation={[1.5, 0, 0]} scale={1.7} dispose={null}>
+        <group
+            {...props}
+            rotation={[Math.PI / 2, 0, 0]}
+            scale={18}
+            dispose={null}
+        >
             <mesh
-                castShadow={"true"}
-                receiveShadow={"true"}
+                castShadow
                 geometry={nodes.Border.geometry}
                 material={materials.Striped}
                 position={[0 - 3.5, 0.3, 0]}
             />
             <mesh
-                castShadow={"true"}
-                receiveShadow={"true"}
+                castShadow
                 geometry={nodes.Metris.geometry}
                 position={[8.19 - 3.5 - 4.96, 1.5 - 1.5, -6.13 + 3.67]}
             >
-                <meshPhongMaterial
-                    color={0x0055b3}
-                    shininess={3}
-                    emissive={0x009dff}
-                    specular={"darkgrey"}
-                />
+                <meshToonMaterial color={0x1372d3} emissiveIntensity={0} />
             </mesh>
         </group>
     );
