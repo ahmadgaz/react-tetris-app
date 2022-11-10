@@ -1,6 +1,13 @@
+import { useEffect, useState } from "react";
 import { Container } from "../../container/container.js";
 
 export const Minigrid = (props) => {
+    const [rerender, setRerender] = useState(false);
+
+    useEffect(() => {
+        setRerender((foo) => !foo);
+    }, [props.minigrid, props.startGame]);
+
     return (
         <Container
             outerStyles={

@@ -1,10 +1,18 @@
 .App {
-    position: fixed;
+    position: absolute;
+    overflow: clip;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100vmax;
-    height: 100vmax;
+    width: 100vw;
+    height: 100vh;
+
+    font-family: "Regular";
+    font-size: 3vmin;
+    text-shadow: -0.25vmin -0.25vmin 0 white, 0 -0.25vmin 0 white,
+        0.25vmin -0.25vmin 0 white, 0.25vmin 0 0 white,
+        0.25vmin 0.25vmin 0 white, 0 0.25vmin 0 white,
+        -0.25vmin 0.25vmin 0 white, -0.25vmin 0 0 white;
 
     -webkit-touch-callout: none;
     -webkit-user-select: none;

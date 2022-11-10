@@ -1,5 +1,5 @@
 import "./grid.css";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 // Tetrominos
 const width = 10;
@@ -42,7 +42,6 @@ const theTetrominoes = [
     iTetromino,
 ];
 
-// Setters
 export const useSetGame = () => {
     // Grid
     const [squares, setSquares] = useState([
@@ -62,40 +61,18 @@ export const useSetGame = () => {
     ]);
 
     // Values
-    const score = useRef(0);
-    const level = useRef(1);
+    const score = useRef();
+    const level = useRef();
     const timer = useRef();
-    const currentPos = useRef(4);
-    const currentRot = useRef(0);
-    const random = useRef(Math.floor(Math.random() * theTetrominoes.length));
-    const nextRandom = useRef(
-        Math.floor(Math.random() * theTetrominoes.length)
-    );
-    const currentTetromino = useRef(
-        theTetrominoes[random.current][currentRot.current]
-    );
-    const nextTetromino = useRef(
-        theTetrominoes[nextRandom.current][currentRot.current]
-    );
+    const currentPos = useRef();
+    const currentRot = useRef();
+    const random = useRef();
+    const nextRandom = useRef();
+    const currentTetromino = useRef();
+    const nextTetromino = useRef();
+    const gameover = useRef();
 
-    // Draw and undraw tetrominos
-    const drawMinigrid = () => {
-        nextTetromino.current.forEach((sqrkey) => {
-            if (sqrkey > 3) {
-                sqrkey = (sqrkey % 10) + 4 * Math.floor(sqrkey / 10);
-            }
-            minigrid.current[sqrkey] = (
-                <div key={sqrkey} className="miniTetromino"></div>
-            );
-        });
-    };
-    const undrawMinigrid = () => {
-        minigrid.current = [
-            ...Array.from(Array(16), (_, i) => (
-                <div key={i} className="miniFree"></div>
-            )),
-        ];
-    };
+    // Helper functions
     const isRightAboveTakenSquare = (sqrs, cur) => {
         return cur.some((sqrKey) => {
             return (
@@ -149,9 +126,14 @@ export const useSetGame = () => {
                     )
                 );
                 score.current += 10;
-                if (score % 100 === 0) {
+                if (score.current % 100 === 0) {
                     level.current =
                         level.current === 5 ? level.current : level.current + 1;
+                    clearInterval(timer.current);
+                    timer.current = setInterval(
+                        moveDown,
+                        1000 - 220 * (level.current - 1)
+                    );
                 }
                 s = checkForFullRow(s);
                 return false;
@@ -161,52 +143,6 @@ export const useSetGame = () => {
         });
         return s;
     };
-    const setNewTetrominoValues = () => {
-        random.current = nextRandom.current;
-        nextRandom.current = Math.floor(Math.random() * theTetrominoes.length);
-        currentRot.current = 0;
-        currentTetromino.current =
-            theTetrominoes[random.current][currentRot.current];
-        undrawMinigrid();
-        nextTetromino.current =
-            theTetrominoes[nextRandom.current][currentRot.current];
-        drawMinigrid();
-        currentPos.current = 4;
-        //setNextTetromino();
-        // add score bs
-        // add gameover bs
-    };
-    const draw = (sqrs) => {
-        let s = sqrs;
-        // Checks if current position overlaps a taken square
-        if (isRightAboveTakenSquare(s, currentTetromino.current)) {
-            s = freezeTetromino(s);
-            s = checkForFullRow(s);
-            setNewTetrominoValues();
-        }
-        // Draw New Tetromino
-        currentTetromino.current.forEach((sqrkey) => {
-            s[currentPos.current + sqrkey] = (
-                <div
-                    key={currentPos.current + sqrkey}
-                    className="tetromino"
-                ></div>
-            );
-        });
-        return s;
-    };
-    const undraw = (sqrs) => {
-        // Undraw current tetromino
-        let s = sqrs;
-        currentTetromino.current.forEach((sqrkey) => {
-            s[currentPos.current + sqrkey] = (
-                <div key={currentPos.current + sqrkey} className="free"></div>
-            );
-        });
-        return s;
-    };
-
-    // Move current tetromino around
     const atLeftEdge = (sqrs, cur) => {
         return (
             cur.some((sqrKey) => {
@@ -264,6 +200,69 @@ export const useSetGame = () => {
             })
         );
     };
+
+    // Setter Functions
+    const setNewTetrominoValues = () => {
+        currentPos.current = 4;
+        currentRot.current = 0;
+        random.current = nextRandom.current;
+        nextRandom.current = Math.floor(Math.random() * theTetrominoes.length);
+        currentTetromino.current =
+            theTetrominoes[random.current][currentRot.current];
+        nextTetromino.current =
+            theTetrominoes[nextRandom.current][currentRot.current];
+    };
+    const drawMinigrid = () => {
+        nextTetromino.current.forEach((sqrkey) => {
+            if (sqrkey > 3) {
+                sqrkey = (sqrkey % 10) + 4 * Math.floor(sqrkey / 10);
+            }
+            minigrid.current[sqrkey] = (
+                <div key={sqrkey} className="miniTetromino"></div>
+            );
+        });
+    };
+    const undrawMinigrid = () => {
+        minigrid.current = [
+            ...Array.from(Array(16), (_, i) => (
+                <div key={i} className="miniFree"></div>
+            )),
+        ];
+    };
+    const draw = (sqrs) => {
+        let s = sqrs;
+        if (isRightAboveTakenSquare(s, currentTetromino.current)) {
+            if (currentPos.current - width === 4) {
+                pauseGame();
+                gameover.current = true;
+            }
+            s = freezeTetromino(s);
+            s = checkForFullRow(s);
+            setNewTetrominoValues();
+            undrawMinigrid();
+            drawMinigrid();
+        }
+        currentTetromino.current.forEach((sqrkey) => {
+            s[currentPos.current + sqrkey] = (
+                <div
+                    key={currentPos.current + sqrkey}
+                    className="tetromino"
+                ></div>
+            );
+        });
+        return s;
+    };
+    const undraw = (sqrs) => {
+        let s = sqrs;
+        currentTetromino.current.forEach((sqrkey) => {
+            s[currentPos.current + sqrkey] = (
+                <div key={currentPos.current + sqrkey} className="free"></div>
+            );
+        });
+        return s;
+    };
+
+    // Controls
     const moveDown = () => {
         setSquares((sqrs) => {
             sqrs = undraw(sqrs);
@@ -318,8 +317,8 @@ export const useSetGame = () => {
         });
     };
 
-    // Keycontrols
-    const keyControls = (e) => {
+    // Keyboard Controls
+    const keyControls = useCallback((e) => {
         if (e.keyCode === 37) {
             moveLeft();
         } else if (e.keyCode === 38) {
@@ -329,21 +328,78 @@ export const useSetGame = () => {
         } else if (e.keyCode === 40) {
             moveDown();
         }
-    };
+    }, []);
 
     const startGame = (lev) => {
         window.addEventListener("keydown", keyControls);
+        score.current = 0;
+        level.current = lev;
+        timer.current = setInterval(moveDown, 1000 - 220 * (level.current - 1));
+        currentPos.current = 4;
+        currentRot.current = 0;
+        random.current = Math.floor(Math.random() * theTetrominoes.length);
+        nextRandom.current = Math.floor(Math.random() * theTetrominoes.length);
+        currentTetromino.current =
+            theTetrominoes[random.current][currentRot.current];
+        nextTetromino.current =
+            theTetrominoes[nextRandom.current][currentRot.current];
+        gameover.current = false;
         setSquares((sqrs) => {
             sqrs = draw(sqrs);
             return [...sqrs];
         });
         drawMinigrid();
-        level.current = lev;
-        timer.current = window.setInterval(
-            moveDown,
-            1000 - 220 * (level.current - 1)
-        );
     };
 
-    return { squares, score, level, minigrid, startGame };
+    const endGame = (initLev) => {
+        window.removeEventListener("keydown", keyControls);
+        score.current = 0;
+        level.current = initLev;
+        clearInterval(timer.current);
+        currentPos.current = 4;
+        currentRot.current = 0;
+        random.current = Math.floor(Math.random() * theTetrominoes.length);
+        nextRandom.current = Math.floor(Math.random() * theTetrominoes.length);
+        currentTetromino.current =
+            theTetrominoes[random.current][currentRot.current];
+        nextTetromino.current =
+            theTetrominoes[nextRandom.current][currentRot.current];
+        gameover.current = false;
+        setSquares([
+            ...Array.from(Array(200), (_, i) => (
+                <div key={i} className="free"></div>
+            )),
+            ...Array.from(Array(10), (_, i) => (
+                <div key={i + 200} className="taken"></div>
+            )),
+        ]);
+        undrawMinigrid();
+    };
+
+    const pauseGame = () => {
+        window.removeEventListener("keydown", keyControls);
+        clearInterval(timer.current);
+    };
+
+    const unpauseGame = () => {
+        setTimeout(() => {
+            window.addEventListener("keydown", keyControls);
+            timer.current = setInterval(
+                moveDown,
+                1000 - 220 * (level.current - 1)
+            );
+        }, 3000);
+    };
+
+    return {
+        squares,
+        score,
+        level,
+        minigrid,
+        gameover,
+        startGame,
+        endGame,
+        pauseGame,
+        unpauseGame,
+    };
 };

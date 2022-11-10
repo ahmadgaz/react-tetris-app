@@ -3,12 +3,12 @@ import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Effects, OrthographicCamera } from "@react-three/drei";
 import { RenderPixelatedPass } from "three/examples/jsm/postprocessing/RenderPixelatedPass.js";
-import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
 import { Container } from "../container/container.js";
 import { Model } from "./Logo.js";
 
-extend({ RenderPixelatedPass, OutlinePass });
+extend({ RenderPixelatedPass });
 
+// LOGO USING THREE.JS
 export const Logo = () => {
     const groupRef = useRef();
     const rawPointerCoordinates = useRef([0, 0]);
@@ -49,7 +49,7 @@ export const Logo = () => {
                 ((10 * window.innerHeight) / 2) -
             changeInPos.current[1];
     };
-    const { size, viewport, gl, scene, camera } = useThree();
+    const { size, scene, camera } = useThree();
     const resolution = useMemo(
         () => new THREE.Vector2(size.width, size.height),
         [size]
@@ -72,9 +72,18 @@ export const Logo = () => {
             );
         });
         return () => {
-            window.removeEventListener("mousemove");
-            window.removeEventListener("mouseout");
-            window.removeEventListener("resize");
+            window.removeEventListener("mousemove", (e) => {
+                updatePos(e.clientX, e.clientY);
+            });
+            window.removeEventListener("mouseout", () => {
+                updatePos(0, 0);
+            });
+            window.removeEventListener("resize", () => {
+                scale.current = Math.min(
+                    window.innerHeight / 1000,
+                    window.innerWidth / 1000
+                );
+            });
         };
     }, []);
 
@@ -95,7 +104,6 @@ export const Logo = () => {
             <ambientLight intensity={0.1} />
             <spotLight castShadow intensity={3} position={[0, 0, 450]} />
             <Effects>
-                <outlinePass args={[resolution, scene, camera]} />
                 <renderPixelatedPass
                     args={[
                         resolution,
@@ -116,13 +124,12 @@ export const Logo = () => {
 };
 
 export const Home = (props) => {
-    const [level, setLevel] = useState(1);
-
     return (
         <Container
             isOffwhite={true}
             bgImg={true}
             outerStyles={{
+                display: !props.show && "none",
                 width: "42.5vmin",
                 height: "85vmin",
             }}
@@ -150,7 +157,7 @@ export const Home = (props) => {
                             textAlign: "center",
                         }}
                         onclick={() => {
-                            props.onClickPlay(level);
+                            props.onClickPlay();
                             return;
                         }}
                         innerContent={() => {
@@ -174,7 +181,9 @@ export const Home = (props) => {
                             textAlign: "center",
                         }}
                         onclick={() => {
-                            setLevel((level) => (level === 5 ? 1 : level + 1));
+                            props.onChangeLevel((level) =>
+                                level === 5 ? 1 : level + 1
+                            );
                             return;
                         }}
                         innerContent={() => {
@@ -185,7 +194,7 @@ export const Home = (props) => {
                                         verticalAlign: "middle",
                                     }}
                                 >
-                                    Level: {level}
+                                    Level: {props.level}
                                 </div>
                             );
                         }}

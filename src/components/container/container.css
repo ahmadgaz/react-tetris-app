@@ -1,12 +1,12 @@
 /* Animation classes */
 .container-anim:hover > .container-face {
-    bottom: 12px;
-    right: 12px;
+    bottom: 1.5vmin;
+    right: 1.5vmin;
 }
 
 .container-anim:active > .container-face {
-    bottom: 4px;
-    right: 4px;
+    bottom: 0.5vmin;
+    right: 0.5vmin;
     transition: top 50ms, left 50ms;
 }
 
@@ -22,7 +22,7 @@
     margin: 2.5vmin;
 
     border-style: solid;
-    border-width: 4px;
+    border-width: 0.5vmin;
     background-color: black;
 }
 
@@ -39,27 +39,21 @@
     margin: 2.5vmin;
 
     border-style: solid;
-    border-width: 4px;
+    border-width: 0.5vmin;
     background-color: black;
 }
 
 .container-face {
     position: relative;
-    bottom: 8px;
-    right: 8px;
+    bottom: 1vmin;
+    right: 1vmin;
     overflow: hidden;
     width: calc(100% - 4vmin);
     height: calc(100% - 4vmin);
     padding: 2vmin;
 
-    font-family: "Regular";
-    font-size: 25px;
-    text-shadow: -2px -2px 0 white, 0 -2px 0 white, 2px -2px 0 white,
-        2px 0 0 white, 2px 2px 0 white, 0 2px 0 white, -2px 2px 0 white,
-        -2px 0 0 white;
-
     border-style: solid;
-    border-width: 4px;
+    border-width: 0.5vmin;
     background-color: white;
 
     display: flex;
