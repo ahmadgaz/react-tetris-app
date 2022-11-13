@@ -9,21 +9,190 @@
     height: 5%;
     background-color: none;
 }
-.miniFree {
-    width: 25%;
-    height: 25%;
-    background-color: none;
-}
 
 .tetromino {
     width: 10%;
     height: 5%;
     background-color: blue;
 }
+
+.takenorange {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/orange.png);
+}
+
+.takenred {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/red.png);
+}
+
+.takenpurple {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/purple.png);
+}
+
+.takengreen {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/green.png);
+}
+
+.takenblue {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/blue.png);
+}
+
+.takencyan {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/cyan.png);
+}
+
+.takenyellow {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/yellow.png);
+}
+.orange {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/orange.png);
+}
+
+.red {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/red.png);
+}
+
+.purple {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/purple.png);
+}
+
+.green {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/green.png);
+}
+
+.blue {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/blue.png);
+}
+
+.cyan {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/cyan.png);
+}
+
+.yellow {
+    width: 10%;
+    height: 5%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/yellow.png);
+}
+
+.miniFree {
+    width: 25%;
+    height: 25%;
+    background-color: none;
+}
+
 .miniTetromino {
     width: 25%;
     height: 25%;
     background-color: blue;
+}
+
+.miniorange {
+    width: 25%;
+    height: 25%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/orange.png);
+}
+
+.minired {
+    width: 25%;
+    height: 25%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/red.png);
+}
+
+.minipurple {
+    width: 25%;
+    height: 25%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/purple.png);
+}
+
+.minigreen {
+    width: 25%;
+    height: 25%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/green.png);
+}
+
+.miniblue {
+    width: 25%;
+    height: 25%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/blue.png);
+}
+
+.minicyan {
+    width: 25%;
+    height: 25%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/cyan.png);
+}
+
+.miniyellow {
+    width: 25%;
+    height: 25%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url(../../public/Colors/yellow.png);
 }
 
 /*scoreboard*/

@@ -3,7 +3,7 @@ import { useCallback, useRef, useState } from "react";
 
 // Tetrominos
 const width = 10;
-const colors = ["orange", "red", "purple", "green", "blue"];
+const colors = ["orange", "red", "purple", "green", "blue", "cyan", "yellow"];
 const lTetromino = [
     [1, width + 1, width * 2 + 1, 2],
     [width, width + 1, width + 2, width * 2 + 2],
@@ -67,7 +67,9 @@ export const useSetGame = () => {
     const currentPos = useRef();
     const currentRot = useRef();
     const random = useRef();
+    const color = useRef();
     const nextRandom = useRef();
+    const nextColor = useRef();
     const currentTetromino = useRef();
     const nextTetromino = useRef();
     const gameOver = useRef();
@@ -75,10 +77,9 @@ export const useSetGame = () => {
     // Helper functions
     const isRightAboveTakenSquare = (sqrs, cur) => {
         return cur.some((sqrKey) => {
-            return (
-                sqrs[currentPos.current + sqrKey + width].props.className ===
-                "taken"
-            );
+            return sqrs[
+                currentPos.current + sqrKey + width
+            ].props.className.includes("taken");
         });
     };
     const freezeTetromino = (sqrs) => {
@@ -86,7 +87,10 @@ export const useSetGame = () => {
         // Freeze Tetromino
         currentTetromino.current.forEach((sqrkey) => {
             s[currentPos.current + sqrkey] = (
-                <div key={currentPos.current + sqrkey} className="taken"></div>
+                <div
+                    key={currentPos.current + sqrkey}
+                    className={"taken" + colors[color.current]}
+                ></div>
             );
         });
         return s;
@@ -100,7 +104,7 @@ export const useSetGame = () => {
                 Number(sqr.key) % width === 0 &&
                 sqrs
                     .slice(Number(sqr.key), Number(sqr.key) + width)
-                    .every((sq) => sq.props.className === "taken")
+                    .every((sq) => sq.props.className.includes("taken"))
             ) {
                 s.push(
                     ...Array.from(Array(width), (_, i) => (
@@ -149,10 +153,9 @@ export const useSetGame = () => {
                 return (currentPos.current + sqrKey) % width === 0;
             }) ||
             cur.some((sqrKey) => {
-                return (
-                    sqrs[currentPos.current + sqrKey - 1].props.className ===
-                    "taken"
-                );
+                return sqrs[
+                    currentPos.current + sqrKey - 1
+                ].props.className.includes("taken");
             })
         );
     };
@@ -162,10 +165,9 @@ export const useSetGame = () => {
                 return (currentPos.current + sqrKey) % width === width - 1;
             }) ||
             cur.some((sqrKey) => {
-                return (
-                    sqrs[currentPos.current + sqrKey + 1].props.className ===
-                    "taken"
-                );
+                return sqrs[
+                    currentPos.current + sqrKey + 1
+                ].props.className.includes("taken");
             })
         );
     };
@@ -193,10 +195,9 @@ export const useSetGame = () => {
             }) ||
             // Checks if any square from the next rotation overlaps with any square that is "taken"
             nextRot.some((sqrKey) => {
-                return (
-                    sqrs[currentPos.current + sqrKey].props.className ===
-                    "taken"
-                );
+                return sqrs[
+                    currentPos.current + sqrKey
+                ].props.className.includes("taken");
             })
         );
     };
@@ -206,7 +207,9 @@ export const useSetGame = () => {
         currentPos.current = 4;
         currentRot.current = 0;
         random.current = nextRandom.current;
+        color.current = nextColor.current;
         nextRandom.current = Math.floor(Math.random() * theTetrominoes.length);
+        nextColor.current = Math.floor(Math.random() * colors.length);
         currentTetromino.current =
             theTetrominoes[random.current][currentRot.current];
         nextTetromino.current =
@@ -218,7 +221,10 @@ export const useSetGame = () => {
                 sqrkey = (sqrkey % 10) + 4 * Math.floor(sqrkey / 10);
             }
             minigrid.current[sqrkey] = (
-                <div key={sqrkey} className="miniTetromino"></div>
+                <div
+                    key={sqrkey}
+                    className={"mini" + colors[nextColor.current]}
+                ></div>
             );
         });
     };
@@ -247,7 +253,7 @@ export const useSetGame = () => {
             s[currentPos.current + sqrkey] = (
                 <div
                     key={currentPos.current + sqrkey}
-                    className="tetromino"
+                    className={colors[color.current]}
                 ></div>
             );
         });
@@ -341,9 +347,11 @@ export const useSetGame = () => {
                 random.current = Math.floor(
                     Math.random() * theTetrominoes.length
                 );
+                color.current = Math.floor(Math.random() * colors.length);
                 nextRandom.current = Math.floor(
                     Math.random() * theTetrominoes.length
                 );
+                nextColor.current = Math.floor(Math.random() * colors.length);
                 currentTetromino.current =
                     theTetrominoes[random.current][currentRot.current];
                 nextTetromino.current =
