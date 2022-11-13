@@ -1,4 +1,4 @@
-import "./grid.css";
+import "./gameStyles.css";
 import { useCallback, useRef, useState } from "react";
 
 // Tetrominos
@@ -70,7 +70,7 @@ export const useSetGame = () => {
     const nextRandom = useRef();
     const currentTetromino = useRef();
     const nextTetromino = useRef();
-    const gameover = useRef();
+    const gameOver = useRef();
 
     // Helper functions
     const isRightAboveTakenSquare = (sqrs, cur) => {
@@ -233,8 +233,9 @@ export const useSetGame = () => {
         let s = sqrs;
         if (isRightAboveTakenSquare(s, currentTetromino.current)) {
             if (currentPos.current - width === 4) {
-                pauseGame();
-                gameover.current = true;
+                window.removeEventListener("keydown", keyControls);
+                clearInterval(timer.current);
+                gameOver.current = true;
             }
             s = freezeTetromino(s);
             s = checkForFullRow(s);
@@ -330,76 +331,61 @@ export const useSetGame = () => {
         }
     }, []);
 
-    const startGame = (lev) => {
-        window.addEventListener("keydown", keyControls);
-        score.current = 0;
-        level.current = lev;
-        timer.current = setInterval(moveDown, 1000 - 220 * (level.current - 1));
-        currentPos.current = 4;
-        currentRot.current = 0;
-        random.current = Math.floor(Math.random() * theTetrominoes.length);
-        nextRandom.current = Math.floor(Math.random() * theTetrominoes.length);
-        currentTetromino.current =
-            theTetrominoes[random.current][currentRot.current];
-        nextTetromino.current =
-            theTetrominoes[nextRandom.current][currentRot.current];
-        gameover.current = false;
-        setSquares((sqrs) => {
-            sqrs = draw(sqrs);
-            return [...sqrs];
-        });
-        drawMinigrid();
-    };
-
-    const endGame = (initLev) => {
-        window.removeEventListener("keydown", keyControls);
-        score.current = 0;
-        level.current = initLev;
-        clearInterval(timer.current);
-        currentPos.current = 4;
-        currentRot.current = 0;
-        random.current = Math.floor(Math.random() * theTetrominoes.length);
-        nextRandom.current = Math.floor(Math.random() * theTetrominoes.length);
-        currentTetromino.current =
-            theTetrominoes[random.current][currentRot.current];
-        nextTetromino.current =
-            theTetrominoes[nextRandom.current][currentRot.current];
-        gameover.current = false;
-        setSquares([
-            ...Array.from(Array(200), (_, i) => (
-                <div key={i} className="free"></div>
-            )),
-            ...Array.from(Array(10), (_, i) => (
-                <div key={i + 200} className="taken"></div>
-            )),
-        ]);
-        undrawMinigrid();
-    };
-
-    const pauseGame = () => {
-        window.removeEventListener("keydown", keyControls);
-        clearInterval(timer.current);
-    };
-
-    const unpauseGame = () => {
-        setTimeout(() => {
-            window.addEventListener("keydown", keyControls);
-            timer.current = setInterval(
-                moveDown,
-                1000 - 220 * (level.current - 1)
-            );
-        }, 3000);
+    const setGameState = (state, lev) => {
+        switch (state) {
+            case "reset":
+                score.current = 0;
+                level.current = lev;
+                currentPos.current = 4;
+                currentRot.current = 0;
+                random.current = Math.floor(
+                    Math.random() * theTetrominoes.length
+                );
+                nextRandom.current = Math.floor(
+                    Math.random() * theTetrominoes.length
+                );
+                currentTetromino.current =
+                    theTetrominoes[random.current][currentRot.current];
+                nextTetromino.current =
+                    theTetrominoes[nextRandom.current][currentRot.current];
+                gameOver.current = false;
+                undrawMinigrid();
+                drawMinigrid();
+                setSquares((sqrs) => {
+                    sqrs = [
+                        ...Array.from(Array(200), (_, i) => (
+                            <div key={i} className="free"></div>
+                        )),
+                        ...Array.from(Array(10), (_, i) => (
+                            <div key={i + 200} className="taken"></div>
+                        )),
+                    ];
+                    sqrs = draw(sqrs);
+                    return [...sqrs];
+                });
+                break;
+            case "pause" || "over":
+                window.removeEventListener("keydown", keyControls);
+                clearInterval(timer.current);
+                break;
+            case "unpause":
+                window.addEventListener("keydown", keyControls);
+                timer.current = setInterval(
+                    moveDown,
+                    1000 - 220 * (level.current - 1)
+                );
+                break;
+            default:
+                break;
+        }
     };
 
     return {
-        squares,
         score,
         level,
+        squares,
         minigrid,
-        gameover,
-        startGame,
-        endGame,
-        pauseGame,
-        unpauseGame,
+        gameOver,
+        setGameState,
     };
 };

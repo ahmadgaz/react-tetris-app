@@ -1,128 +1,99 @@
 import "./App.css";
-import { useState, useRef } from "react";
-import { Background } from "./components/background/background.js";
-import { Home } from "./components/home/home.js";
-import { Grid } from "./components/game/grid/grid.js";
-import { Minigrid } from "./components/game/minigrid/minigrid.js";
-import { Scoreboard } from "./components/game/scoreboard/scoreboard.js";
-import { Pause, PauseBtn, UnpauseAnimation } from "./components/pause/pause.js";
-import { Gameover } from "./components/gameover/gameover.js";
+import { useState, useEffect } from "react";
+import { Background } from "./background/background.js";
+import {
+    Home,
+    Grid,
+    Minigrid,
+    Scoreboard,
+    Pause,
+    PauseBtn,
+    UnpauseAnimation,
+    GameOver,
+} from "./components/gameComponents.js";
 
 function App() {
-    const startGame = useRef(false);
-    const pauseGame = useRef(false);
-    const restartSwitch = useRef(false);
-    const quitSwitch = useRef(false);
-    const [score, setScore] = useState(0);
-    const [level, setLevel] = useState(1);
+    const [score, setScore] = useState();
+    const [level, setLevel] = useState();
+    const [initialLevel, setInitialLevel] = useState();
     const [minigrid, setMinigrid] = useState();
-    const [showHome, setShowHome] = useState(true);
-    const [showGrid, setShowGrid] = useState(false);
-    const [showPause, setShowPause] = useState(false);
-    const [showPauseBtn, setShowPauseBtn] = useState(false);
-    const [count, setCount] = useState(-1);
-    const [playAnimation, setPlayAnimation] = useState(false);
-    const [showGameover, setShowGameover] = useState(false);
+    const [gameState, setGameState] = useState("home");
+    const [renderTwice, setRenderTwice] = useState(false);
+    const [count, setCount] = useState();
 
-    const setGame = () => {
-        setShowHome((show) => !show);
-        setShowGrid((show) => !show);
-        setShowPauseBtn(true);
-        startGame.current = !startGame.current;
+    // STATES
+    // MINIGRID AND SCOREBOARD ALWAYS SHOW
+    const home = () => {
+        setGameState("home");
+    };
+    const reset = () => {
+        setGameState("reset");
     };
 
-    const endGame = () => {
-        setShowHome((show) => !show);
-        setShowGrid((show) => !show);
-        setShowPauseBtn(false);
-        pauseGame.current = !pauseGame.current;
-        startGame.current = !startGame.current;
+    const pause = () => {
+        setGameState("pause");
     };
 
-    const restartGame = () => {
-        endGame();
-        setShowPause(false);
-        setShowGameover(false);
-        restartSwitch.current = !restartSwitch.current;
+    const unpause = () => {
+        setGameState("unpause");
     };
 
-    const quitGame = () => {
-        endGame();
-        setShowPause(false);
-        setShowGameover(false);
-        quitSwitch.current = !quitSwitch.current;
+    const unpauseCountdown = () => {
+        setCount(3);
+        setGameState("unpauseCountdown");
     };
+
+    const over = () => {
+        setGameState("over");
+    };
+
+    if (renderTwice) {
+        unpause();
+        setRenderTwice(false);
+    }
 
     if (count > 0) {
         setTimeout(() => {
             setCount((c) => c - 1);
         }, 1000);
     } else if (count === 0) {
-        setPlayAnimation(false);
+        setGameState("unpause");
         setCount((c) => c - 1);
     }
-
-    const setPauseGame = () => {
-        if (showPause) {
-            setPlayAnimation(true);
-            setCount(3);
-        }
-        setShowPause((show) => !show);
-        pauseGame.current = !pauseGame.current;
-    };
 
     return (
         <div className="App">
             <Background />
             <Home
-                show={showHome}
-                level={level}
-                onChangeLevel={setLevel}
-                onClickPlay={setGame}
+                gameState={gameState}
+                setLevel={setInitialLevel}
+                onPlay={reset}
             />
 
             <Grid
-                show={showGrid}
-                pauseGame={pauseGame.current}
-                startGame={startGame.current}
-                restartSwitch={restartSwitch.current}
-                quitSwitch={quitSwitch.current}
-                level={level}
-                onChangeScore={setScore}
-                onChangeLevel={setLevel}
-                onChangeMinigrid={setMinigrid}
-                onGameOver={(bool) => {
-                    pauseGame.current = false;
-                    setShowGameover(bool);
-                }}
-                onRestart={() => {
-                    pauseGame.current = false;
-                    setGame();
-                }}
+                gameState={gameState}
+                level={initialLevel}
+                setScore={setScore}
+                setLevel={setLevel}
+                setMinigrid={setMinigrid}
+                setRenderTwice={setRenderTwice}
+                over={over}
             />
 
             <div>
-                <Minigrid startGame={startGame.current} minigrid={minigrid} />
-                <Scoreboard
-                    startGame={startGame.current}
-                    score={score}
-                    level={level}
-                />
+                <Minigrid gameState={gameState} minigrid={minigrid} />
+                <Scoreboard gameState={gameState} score={score} level={level} />
             </div>
-            <PauseBtn show={showPauseBtn} onPauseGame={setPauseGame} />
+            <PauseBtn gameState={gameState} pause={pause} />
             <Pause
-                show={showPause}
-                onResume={setPauseGame}
-                onRestart={restartGame}
-                onQuit={quitGame}
+                gameState={gameState}
+                onResume={unpauseCountdown}
+                onRestart={reset}
+                onQuit={home}
             />
 
-            <UnpauseAnimation show={playAnimation} count={count} />
-            <Gameover
-                show={showGameover}
-                onRestart={restartGame}
-                onQuit={quitGame}
-            />
+            <UnpauseAnimation gameState={gameState} count={count} />
+            <GameOver gameState={gameState} onRestart={reset} onQuit={home} />
         </div>
     );
 }
