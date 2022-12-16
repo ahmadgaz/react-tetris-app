@@ -1,5 +1,5 @@
 import "./gameStyles.css";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { useSetGame } from "./gameState.js";
 import { Container } from "./container.js";
 // THREE.JS IMPORTS
@@ -61,32 +61,29 @@ export const Logo = () => {
         Math.min(window.innerHeight / 1000, window.innerWidth / 1000)
     );
 
+    const newPos = useCallback((e) => {
+        updatePos(e.clientX, e.clientY);
+    }, []);
+
+    const defaultPos = useCallback((e) => {
+        updatePos(0, 0);
+    }, []);
+
+    const scaling = useCallback(() => {
+        scale.current = Math.min(
+            window.innerHeight / 1000,
+            window.innerWidth / 1000
+        );
+    }, []);
+
     useEffect(() => {
-        window.addEventListener("mousemove", (e) => {
-            updatePos(e.clientX, e.clientY);
-        });
-        window.addEventListener("mouseout", () => {
-            updatePos(0, 0);
-        });
-        window.addEventListener("resize", () => {
-            scale.current = Math.min(
-                window.innerHeight / 1000,
-                window.innerWidth / 1000
-            );
-        });
+        window.addEventListener("mousemove", newPos);
+        window.addEventListener("mouseout", defaultPos);
+        window.addEventListener("resize", scaling);
         return () => {
-            window.removeEventListener("mousemove", (e) => {
-                updatePos(e.clientX, e.clientY);
-            });
-            window.removeEventListener("mouseout", () => {
-                updatePos(0, 0);
-            });
-            window.removeEventListener("resize", () => {
-                scale.current = Math.min(
-                    window.innerHeight / 1000,
-                    window.innerWidth / 1000
-                );
-            });
+            window.removeEventListener("mousemove", newPos);
+            window.removeEventListener("mouseout", defaultPos);
+            window.removeEventListener("resize", scaling);
         };
     }, []);
 

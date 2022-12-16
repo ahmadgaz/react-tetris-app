@@ -23,7 +23,9 @@ export const Container = (props) => {
                         : { ...props.innerStyles, backgroundColor: "white" }
                 }
             >
-                {props.bgImg === true && <img className="bgImg" src={BgImg} />}
+                {props.bgImg === true && (
+                    <img className="bgImg" src={BgImg} alt="" />
+                )}
                 {!(props.innerContent === undefined) && props.innerContent()}
             </div>
         </div>
